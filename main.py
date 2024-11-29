@@ -26,8 +26,10 @@ player_y = 663# Player starting position y
 direction = 0 # Player starting direction (right)
 counter = 0
 flicker = False # flicker for powerup tiles
+valid_turns = [False, False, False, False]#R,L,U,D - checks which way the player is able to turn 
 
 
+#function for drawing the player sprite
 
 def drawPlayer():
     if direction == 0:
@@ -41,7 +43,7 @@ def drawPlayer():
 
 
 
-#drawing the tilemap board
+#function for drawing the tilemap board
 
 level = boards
 
@@ -71,6 +73,58 @@ def drawBoard():
                 pygame.draw.line(screen, 'white', (j * num2 , i * num1 + (0.5*num1)), (j * num2 + num2, i * num1 + (0.5*num1)), 3) # draw horizontal walls (ghost area gate)
 
 
+#collision checker - spots direct near open spaces in all directions of the player sprite
+
+def checkPosition(centerx, centery):
+    turns = [False, False, False, False] #R,L,U,D
+    num1 = (HEIGHT-50)//32
+    num2 = (WIDTH//30)
+    num3 = 15
+    #check collisions based on center x and center y of player + or - num3
+    if centerx // 30 < 29:
+        if direction == 0:
+            if level[centery//num1][(centerx - num3)//num2] <3:
+                turns[1] = True
+        if direction == 1:
+            if level[centery//num1][(centerx + num3)//num2] <3:
+                turns[0] = True
+        if direction == 2:
+            if level[(centery+num3)//num1][centerx//num2] <3:
+                turns[3] = True
+        if direction == 3:
+            if level[(centery-num3)//num1][centerx//num2] <3:
+                turns[2] = True
+
+        if direction == 0 or direction == 1: # check for moving left or right
+            if 12 <= centerx % num2 <= 18: # if centerx mod num2 between 12 and 18, rough midpoint of tile - to calculate above or below
+                if level[(centery + num1) //num1][centerx //num2] < 3: # if position directly below open
+                    turns[3] = True
+                if level[(centery - num1) //num1][centerx //num2] < 3: # if position directly above open
+                    turns[2] = True
+            if 12 <= centery % num1 <= 18: # if centerx mod num2 between 12 and 18, rough midpoint of tile - to calculate left or right
+                if level[centery//num1][(centerx - num3) //num2] < 3: # if position directly left open
+                    turns[1] = True
+                if level[centery//num1][(centerx + num3) //num2] < 3: # if position directly right open
+                    turns[0] = True
+
+        if direction == 2 or direction == 3: # check for moving up or down
+            if 12 <= centerx % num2 <= 18: # if centerx mod num2 between 12 and 18, rough midpoint of tile - to calculate above or below
+                if level[(centery + num3) //num1][centerx //num2] < 3: # if position directly below open
+                    turns[3] = True
+                if level[(centery - num3) //num1][centerx //num2] < 3: # if position directly above open
+                    turns[2] = True
+            if 12 <= centery % num1 <= 18: # if centerx mod num2 between 12 and 18, rough midpoint of tile - to calculate left or right
+                if level[centery//num1][(centerx - num2) //num2] < 3: # if position directly left open
+                    turns[1] = True
+                if level[centery//num1][(centerx + num2) //num2] < 3: # if position directly right open
+                    turns[0] = True
+
+    else:
+        turns[0] = True
+        turns[1] = True
+
+    return turns
+
 #game loop
 run = True
 while run:
@@ -87,6 +141,9 @@ while run:
     screen.fill('black')
     drawBoard()
     drawPlayer()
+    center_x = player_x + 23
+    center_y = player_y + 24
+    valid_turns = checkPosition(center_x,center_y) # calls checkPosition, checks for valid turn and passes the center point for the player sprite
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
