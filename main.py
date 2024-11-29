@@ -12,14 +12,14 @@ screen = pygame.display.set_mode([WIDTH, HEIGHT])
 timer = pygame.time.Clock()
 
 
-running = True
-while running:
+run = True
+while run:
     timer.tick(fps)
     screen.fill('black')
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
+            run = False
 
     pygame.display.flip()
 pygame.quit()
