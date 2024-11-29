@@ -7,10 +7,16 @@ import math
 
 pygame.init()
 
+game_version = 2
+game_icon = pygame.image.load('assets/player_images/1.png')
+
+
 #Window options
 WIDTH = 900
 HEIGHT = 950 # 50 extra pixels, so that  there is space for amount of coins & lives.
 fps = 60
+pygame.display.set_icon(game_icon)
+pygame.display.set_caption(f'Pacman - Version {game_version}')
 font = pygame.font.Font('freesansbold.ttf', 20) # set font
 screen = pygame.display.set_mode([WIDTH, HEIGHT]) # set screen size
 timer = pygame.time.Clock()
