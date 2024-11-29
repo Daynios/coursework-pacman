@@ -32,7 +32,6 @@ player_y = 663# Player starting position y
 direction = 0 # Player starting direction (right)
 counter = 0
 flicker = False # flicker for powerup tiles
-valid_turns = [False, False, False, False]#R,L,U,D - checks which way the player is able to turn 
 
 
 #function for drawing the player sprite
