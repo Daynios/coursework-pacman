@@ -48,6 +48,8 @@ def drawBoard():
             if level[i][j] == 9:
                 pygame.draw.line(screen, 'white', (j * num2 , i * num1 + (0.5*num1)), (j * num2 + num2, i * num1 + (0.5*num1)), 3) # draw horizontal walls (ghost area gate)
 
+
+#game loop
 run = True
 while run:
     timer.tick(fps)
