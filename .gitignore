@@ -1,3 +1,4 @@
 collision_check.txt
 versions/*
-__pycache__/*
+__pycache__/
+.tmp.driveupload/
