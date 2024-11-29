@@ -1,2 +1,3 @@
 collision_check.txt
 versions/*
+__pycache__/*
