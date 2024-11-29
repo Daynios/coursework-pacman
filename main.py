@@ -1,7 +1,7 @@
 # Pygame recreation in pygame with extra features
 
+#imports
 from board import boards #import tilemaps from board file
-
 import pygame
 import math
 
@@ -9,12 +9,12 @@ pygame.init()
 
 #Window options
 WIDTH = 900
-HEIGHT = 950
+HEIGHT = 950 # 50 extra pixels, so that  there is space for amount of coins & lives.
 fps = 60
-font = pygame.font.Font('freesansbold.ttf', 20)
-screen = pygame.display.set_mode([WIDTH, HEIGHT])
+font = pygame.font.Font('freesansbold.ttf', 20) # set font
+screen = pygame.display.set_mode([WIDTH, HEIGHT]) # set screen size
 timer = pygame.time.Clock()
-PI = math.pi
+PI = math.pi # sets pi as a variable, so that it can be easily called in future without having to use math.pi
 
 colour = 'blue' #colour for all of the tilemap shapes. (excl powerups & coins.)
 
