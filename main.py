@@ -163,6 +163,10 @@ while run:
                 direction = 2
             if event.key == pygame.K_DOWN:
                 direction = 3
+            
+        if event.type == pygame.KEYDOWN:    #Register game quit with escape
+            if event.key == pygame.K_ESCAPE:
+                pygame.quit()
 
     pygame.display.flip()
 pygame.quit()
