@@ -32,7 +32,9 @@ player_y = 663# Player starting position y
 direction = 0 # Player starting direction (right)
 counter = 0
 flicker = False # flicker for powerup tiles
-
+valid_turns = [False, False, False, False] #R,L,U,D
+direction_command = 0
+player_speed = 2
 
 #function for drawing the player sprite
 
@@ -130,6 +132,19 @@ def checkPosition(centerx, centery):
 
     return turns
 
+def movePlayer(play_x, play_y):
+    #r,l,u,d
+    if direction == 0 and valid_turns[0]:
+        play_x += player_speed
+    elif direction == 1 and valid_turns[1]:
+        play_x -= player_speed
+    if direction == 2 and valid_turns[2]:
+        play_y -= player_speed
+    elif direction == 3 and valid_turns[3]:
+        play_y += player_speed
+    return play_x, play_y
+    
+
 #game loop
 run = True
 while run:
@@ -149,6 +164,7 @@ while run:
     center_x = player_x + 23
     center_y = player_y + 24
     valid_turns = checkPosition(center_x,center_y) # calls checkPosition, checks for valid turn and passes the center point for the player sprite
+    player_x, player_y = movePlayer(player_x,player_y)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -156,15 +172,41 @@ while run:
 
         if event.type == pygame.KEYDOWN:    #Register direction changes with arrow keys
             if event.key == pygame.K_RIGHT:
-                direction = 0
+                direction_command = 0
             if event.key == pygame.K_LEFT:
-                direction = 1
+                direction_command = 1
             if event.key == pygame.K_UP:
-                direction = 2
+                direction_command = 2
             if event.key == pygame.K_DOWN:
-                direction = 3
+                direction_command = 3
+        if event.type == pygame.KEYUP:    #Register direction changes with arrow keys
+            if event.key == pygame.K_RIGHT and direction_command == 0:
+                direction_command = direction
+            if event.key == pygame.K_LEFT and direction_command == 1:
+                direction_command = direction
+            if event.key == pygame.K_UP and direction_command == 2:
+                direction_command = direction
+            if event.key == pygame.K_DOWN and direction_command == 3:
+                direction_command = direction
             if event.key == pygame.K_ESCAPE: #Register game quit with escape
                 pygame.quit()
+
+    if direction_command == 0 and valid_turns[0]:
+        direction = 0
+    if direction_command == 1 and valid_turns[1]:
+        direction = 1
+    if direction_command == 2 and valid_turns[2]:
+        direction = 2
+    if direction_command == 3 and valid_turns[3]:
+        direction = 3
+    if player_x > 900:
+        player_x = -47
+    elif player_x < -50:
+        player_x = 897
+
+
+
+
 
     pygame.display.flip()
 pygame.quit()
