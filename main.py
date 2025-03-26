@@ -36,12 +36,27 @@ valid_turns = [False, False, False, False] #R,L,U,D
 direction_command = 0
 player_speed = 2
 score = 0
+powerup = False
+power_count = 0
+eaten_ghosts = [False,False,False,False]
+moving = False
+startup_counter = 0
+lives = 3
 
+
+#draws text on bottom of screen e.g score
 def drawMisc():
     score_text = font.render(f'Score: {score}', True, 'white')
     screen.blit(score_text, (10,920))
 
-def checkCollision(score):
+    if powerup: # powerup indicator in bottom bar when powerup active
+        pygame.draw.circle(screen, 'blue', (140, 930), 15)
+
+    for i in range(lives): # display pacman icons based on how many lives remaining
+        screen.blit(pygame.transform.scale(player_images[0], (30, 30)), (650 + i * 40, 915))
+
+#eating items &scoring appropriately
+def checkCollision(score, powerup, power_count, eaten_ghosts):
     num1 = (HEIGHT - 50) // 32
     num2 = WIDTH//30
     if 0 < player_x < 870:
@@ -51,10 +66,13 @@ def checkCollision(score):
         if level[center_y//num1][center_x//num2] == 2:
             level[center_y//num1][center_x//num2] = 0
             score +=50
-    return score
+            powerup = True
+            power_count = 0
+            eaten_ghosts = [False, False, False, False]
+
+    return score, powerup, power_count, eaten_ghosts
 
 #function for drawing the player sprite
-
 def drawPlayer():
     if direction == 0:
         screen.blit(player_images[counter // 5], (player_x, player_y)) # RIGHT
@@ -68,7 +86,6 @@ def drawPlayer():
 
 
 #function for drawing the tilemap board
-
 level = boards
 
 def drawBoard():
@@ -174,6 +191,19 @@ while run:
     else:
         counter = 0
         flicker = True
+    
+    if powerup and power_count < 600:
+        power_count += 1
+    elif powerup and power_count >=600:
+        power_count = 0
+        powerup = False
+        eaten_ghosts = [False,False,False,False]
+    
+    if  startup_counter < 180:
+        moving = False
+        startup_counter +=1
+    else:
+         moving = True
 
     screen.fill('black')
     drawBoard()
@@ -182,8 +212,9 @@ while run:
     center_x = player_x + 23
     center_y = player_y + 24
     valid_turns = checkPosition(center_x,center_y) # calls checkPosition, checks for valid turn and passes the center point for the player sprite
-    player_x, player_y = movePlayer(player_x,player_y)
-    score = checkCollision(score)
+    if moving: # only allow the player to move after the startup counter
+        player_x, player_y = movePlayer(player_x,player_y)
+    score, powerup, power_count, eaten_ghosts = checkCollision(score, powerup, power_count, eaten_ghosts)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
