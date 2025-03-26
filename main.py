@@ -37,6 +37,10 @@ direction_command = 0
 player_speed = 2
 score = 0
 
+def drawMisc():
+    score_text = font.render(f'Score: {score}', True, 'white')
+    screen.blit(score_text, (10,920))
+
 def checkCollision(score):
     num1 = (HEIGHT - 50) // 32
     num2 = WIDTH//30
@@ -174,6 +178,7 @@ while run:
     screen.fill('black')
     drawBoard()
     drawPlayer()
+    drawMisc()
     center_x = player_x + 23
     center_y = player_y + 24
     valid_turns = checkPosition(center_x,center_y) # calls checkPosition, checks for valid turn and passes the center point for the player sprite
