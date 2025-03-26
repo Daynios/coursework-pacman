@@ -35,6 +35,19 @@ flicker = False # flicker for powerup tiles
 valid_turns = [False, False, False, False] #R,L,U,D
 direction_command = 0
 player_speed = 2
+score = 0
+
+def checkCollision(score):
+    num1 = (HEIGHT - 50) // 32
+    num2 = WIDTH//30
+    if 0 < player_x < 870:
+        if level[center_y//num1][center_x//num2] == 1:
+            level[center_y//num1][center_x//num2] = 0
+            score +=10
+        if level[center_y//num1][center_x//num2] == 2:
+            level[center_y//num1][center_x//num2] = 0
+            score +=50
+    return score
 
 #function for drawing the player sprite
 
@@ -165,6 +178,7 @@ while run:
     center_y = player_y + 24
     valid_turns = checkPosition(center_x,center_y) # calls checkPosition, checks for valid turn and passes the center point for the player sprite
     player_x, player_y = movePlayer(player_x,player_y)
+    score = checkCollision(score)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
