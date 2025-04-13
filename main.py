@@ -183,7 +183,7 @@ class Ghost:
 
     def moveClyde(self):
         # r,l,u,d
-        #clyde will turn when advantage for pursuit
+        #clyde will turn when it would be an advantage for pursuit
         if self.direction == 0: # if facing right
             if self.target[0] > self.x_pos and self.turns[0]: # keep going current direction as far as you can to get to target
                 self.x_pos += self.speed
