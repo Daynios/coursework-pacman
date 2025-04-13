@@ -317,9 +317,9 @@ class Ghost:
                 else:
                     self.y_pos += self.speed
 
-        if self.x_pos < -30:
+        if self.x_pos < -30: #if off screen to left (makes the ghost look like they are catching up to you, moves a short distance closer to player)
             self.x_pos = 900
-        elif self.x_pos > 900:
+        elif self.x_pos > 900: # if off screen to right (makes the ghost look like they are catching up to you, moves a short distance closer to player)
             self.x_pos - 30
         return self.x_pos, self.y_pos, self.direction
 
