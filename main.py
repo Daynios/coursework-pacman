@@ -490,28 +490,28 @@ def getTargets(blink_x, blink_y, blink_dead, ink_x, ink_y, ink_dead, pink_x, pin
             clyd_target = return_target # if powerup active & dead - go back to box
     else:
         if not blink_dead:
-            if 340 < blink_x < 560 and 380 < blink_y < 500:
+            if 340 < blink_x < 560 and 340 < blink_y < 500:
                 blink_target = (400,100)
             else:
                 blink_target = (player_x, player_y) # go to target player
         else:
             blink_target = return_target # if powerup active & dead - go back to box
         if not pink_dead:
-            if 340 < pink_x < 560 and 380 < pink_y < 500:
+            if 340 < pink_x < 560 and 340 < pink_y < 500:
                 pink_target = (400,100)
             else:
                 pink_target = (player_x, player_y) # go to target player
         else:
             pink_target = return_target # if powerup active & dead - go back to box
         if not ink_dead:
-            if 340 < ink_x < 560 and 380 < ink_y < 500:
+            if 340 < ink_x < 560 and 340 < ink_y < 500:
                 ink_target = (400,100)
             else:
                 ink_target = (player_x, player_y) # go to target player
         else:
             ink_target = return_target # if powerup active & dead - go back to box
         if not clyd_dead:
-            if 340 < clyd_x < 560 and 380 < clyd_y < 500:
+            if 340 < clyd_x < 560 and 340 < clyd_y < 500:
                 clyd_target = (400,100)
             else:
                 clyd_target = (player_x, player_y) # go to target player
