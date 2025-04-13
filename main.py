@@ -7,7 +7,7 @@ import math
 
 pygame.init()
 
-game_version = "4"
+game_version = "5 (beta)"
 game_icon = pygame.image.load('assets/player_images/1.png')
 
 
@@ -459,6 +459,66 @@ def movePlayer(play_x, play_y):
         play_y += player_speed
     return play_x, play_y
     
+def getTargets(blink_x, blink_y, ink_x, ink_y, pink_x, pink_y, clyd_x, clyd_y):
+    if player_x < 450: # where to go if powerup active
+        runaway_x = 900
+    else:
+        runaway_x = 0
+    if player_y < 450: # where to go if powerup active
+        runaway_y = 900
+    else:
+        runaway_y = 0
+    return_target = (380,400)
+
+
+    if powerup:
+        if not blinky.dead:
+            blink_target = (runaway_x, runaway_y) # run away if powerup active
+        else:
+            blink_target = return_target # if powerup active & dead - go back to box
+        if not pinky.dead:
+            pink_target = (player_x, runaway_y) # run away if powerup active
+        else:
+            pink_target = return_target # if powerup active & dead - go back to box
+        if not inky.dead:
+            ink_target = (runaway_x, runaway_y) # run away if powerup active
+        else:
+            ink_target = return_target # if powerup active & dead - go back to box
+        if not clyde.dead:
+            clyd_target = (450, 450) # run away if powerup active
+        else:
+            clyd_target = return_target # if powerup active & dead - go back to box
+    else:
+        if not blinky.dead:
+            if 340 < blink_x < 560 and 380 < blink_y < 500:
+                blink_target = (400,100)
+            else:
+                blink_target = (player_x, player_y) # go to target player
+        else:
+            blink_target = return_target # if powerup active & dead - go back to box
+        if not pinky.dead:
+            if 340 < pink_x < 560 and 380 < pink_y < 500:
+                pink_target = (400,100)
+            else:
+                pink_target = (player_x, player_y) # go to target player
+        else:
+            pink_target = return_target # if powerup active & dead - go back to box
+        if not inky.dead:
+            if 340 < ink_x < 560 and 380 < ink_y < 500:
+                ink_target = (400,100)
+            else:
+                ink_target = (player_x, player_y) # go to target player
+        else:
+            ink_target = return_target # if powerup active & dead - go back to box
+        if not clyde.dead:
+            if 340 < clyd_x < 560 and 380 < clyd_y < 500:
+                clyd_target = (400,100)
+            else:
+                clyd_target = (player_x, player_y) # go to target player
+        else:
+            clyd_target = return_target # if powerup active & dead - go back to box
+
+    return [blink_target, ink_target, pink_target, clyd_target]
 
 #game loop
 run = True
@@ -490,6 +550,7 @@ while run:
     drawBoard()
     drawPlayer()
     drawMisc()
+    targets = getTargets(blinky_x, blinky_y, inky_x, inky_y, pinky_x, pinky_y, clyde_x, clyde_y)
     
     blinky = Ghost(blinky_x, blinky_y, targets[0], ghost_speed, blinky_img, blinky_direction, blinky_dead, blinky_box, 0) # init blinky
     inky = Ghost(inky_x, inky_y, targets[1], ghost_speed, inky_img, inky_direction, inky_dead, inky_box, 1) # init inky
