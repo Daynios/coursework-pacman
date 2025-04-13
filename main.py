@@ -459,7 +459,7 @@ def movePlayer(play_x, play_y):
         play_y += player_speed
     return play_x, play_y
     
-def getTargets(blink_x, blink_y, ink_x, ink_y, pink_x, pink_y, clyd_x, clyd_y):
+def getTargets(blink_x, blink_y, blink_dead, ink_x, ink_y, ink_dead, pink_x, pink_y, pink_dead, clyd_x, clyd_y, clyd_dead):
     if player_x < 450: # where to go if powerup active
         runaway_x = 900
     else:
@@ -472,45 +472,45 @@ def getTargets(blink_x, blink_y, ink_x, ink_y, pink_x, pink_y, clyd_x, clyd_y):
 
 
     if powerup:
-        if not blinky.dead:
+        if not blink_dead:
             blink_target = (runaway_x, runaway_y) # run away if powerup active
         else:
             blink_target = return_target # if powerup active & dead - go back to box
-        if not pinky.dead:
+        if not pink_dead:
             pink_target = (player_x, runaway_y) # run away if powerup active
         else:
             pink_target = return_target # if powerup active & dead - go back to box
-        if not inky.dead:
+        if not ink_dead:
             ink_target = (runaway_x, runaway_y) # run away if powerup active
         else:
             ink_target = return_target # if powerup active & dead - go back to box
-        if not clyde.dead:
+        if not clyd_dead:
             clyd_target = (450, 450) # run away if powerup active
         else:
             clyd_target = return_target # if powerup active & dead - go back to box
     else:
-        if not blinky.dead:
+        if not blink_dead:
             if 340 < blink_x < 560 and 380 < blink_y < 500:
                 blink_target = (400,100)
             else:
                 blink_target = (player_x, player_y) # go to target player
         else:
             blink_target = return_target # if powerup active & dead - go back to box
-        if not pinky.dead:
+        if not pink_dead:
             if 340 < pink_x < 560 and 380 < pink_y < 500:
                 pink_target = (400,100)
             else:
                 pink_target = (player_x, player_y) # go to target player
         else:
             pink_target = return_target # if powerup active & dead - go back to box
-        if not inky.dead:
+        if not ink_dead:
             if 340 < ink_x < 560 and 380 < ink_y < 500:
                 ink_target = (400,100)
             else:
                 ink_target = (player_x, player_y) # go to target player
         else:
             ink_target = return_target # if powerup active & dead - go back to box
-        if not clyde.dead:
+        if not clyd_dead:
             if 340 < clyd_x < 560 and 380 < clyd_y < 500:
                 clyd_target = (400,100)
             else:
@@ -550,7 +550,7 @@ while run:
     drawBoard()
     drawPlayer()
     drawMisc()
-    targets = getTargets(blinky_x, blinky_y, inky_x, inky_y, pinky_x, pinky_y, clyde_x, clyde_y)
+    targets = getTargets(blinky_x, blinky_y, blinky_dead, inky_x, inky_y, inky_dead, pinky_x, pinky_y, pinky_dead, clyde_x, clyde_y, clyde_dead)
     
     blinky = Ghost(blinky_x, blinky_y, targets[0], ghost_speed, blinky_img, blinky_direction, blinky_dead, blinky_box, 0) # init blinky
     inky = Ghost(inky_x, inky_y, targets[1], ghost_speed, inky_img, inky_direction, inky_dead, inky_box, 1) # init inky
