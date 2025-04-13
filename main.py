@@ -7,7 +7,7 @@ import math
 
 pygame.init()
 
-game_version = "4 (beta)"
+game_version = "4"
 game_icon = pygame.image.load('assets/player_images/1.png')
 
 
@@ -61,7 +61,7 @@ inky_direction = 2
 pinky_x = 440
 pinky_y = 438
 pinky_direction = 2
-clyde_x = 440
+clyde_x = 380
 clyde_y = 438
 clyde_direction = 2
 
