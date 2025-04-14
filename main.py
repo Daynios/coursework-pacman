@@ -7,7 +7,7 @@ import math
 
 pygame.init()
 
-game_version = "5"
+game_version = "6"
 game_icon = pygame.image.load('assets/player_images/1.png')
 
 
