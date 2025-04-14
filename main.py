@@ -1,13 +1,15 @@
 # Pygame recreation in pygame with extra features
 
 #imports
+import copy
 from board import boards #import tilemaps from board file
 import pygame
 import math
+from os import path
 
 pygame.init()
 
-game_version = "6"
+game_version = "7"
 game_icon = pygame.image.load('assets/player_images/1.png')
 
 
@@ -21,6 +23,8 @@ font = pygame.font.Font('freesansbold.ttf', 20) # set font
 screen = pygame.display.set_mode([WIDTH, HEIGHT]) # set screen size
 timer = pygame.time.Clock()
 PI = math.pi # sets pi as a variable, so that it can be easily called in future without having to use math.pi
+
+highscore_file = 'highscore.txt'
 
 colour = 'blue' #colour for all of the tilemap shapes. (excl powerups & coins.)
 
@@ -38,7 +42,10 @@ power_count = 0
 eaten_ghost = [False,False,False,False]
 moving = False
 startup_counter = 0
-lives = 3
+lives_init = 0
+lives = lives_init
+game_over = False
+game_won = False
 
 player_images = []
 for i in range(1,5):
@@ -75,6 +82,17 @@ inky_box = False
 clyde_box = False
 pinky_box = False
 ghost_speeds = [2, 2, 2, 2]
+
+def loadHighScore(): # high score loading
+    if path.exists(highscore_file):
+        with open(highscore_file, 'r') as f:
+            return int(f.read())
+    else:
+        return 0
+
+def saveHighScore(new_score): # high score saving
+    with open(highscore_file, 'w') as f:
+        f.write(str(new_score))
 
 
 class Ghost:
@@ -683,11 +701,27 @@ class Ghost:
 
 #draws text on bottom of screen e.g score
 def drawMisc():
-    bottom_text = font.render(f'Score: {score}', True, 'white')
+    high_score = loadHighScore()  # Load the high score from file
+
+    font_popup = pygame.font.Font('freesansbold.ttf', 32) # different font size for the popup messages for win/loss conditions
+
+    bottom_text = font.render(f'Score: {score} - High score: {high_score}', True, 'white')
     screen.blit(bottom_text, (10,920))
 
-    if powerup: # powerup indicator in bottom bar when powerup active
-        pygame.draw.circle(screen, 'blue', (140, 930), 15)
+    if game_over:
+        pygame.draw.rect(screen, 'white', [50, 200, 800, 300], 0, 10)
+        pygame.draw.rect(screen, 'dark gray', [70, 220, 760, 260], 0, 10)
+        gameover_text = font_popup.render('Game over - Space Bar to restart!', True, 'red')
+        screen.blit(gameover_text, (160, 340))
+
+    if game_won:
+        pygame.draw.rect(screen, 'white', [50, 200, 800, 300], 0, 10)
+        pygame.draw.rect(screen, 'dark gray', [70, 220, 760, 260], 0, 10)
+        winning_text = font_popup.render('You win! - Space Bar to restart!', True, 'green')
+        screen.blit(winning_text, (120, 340))
+
+    # if powerup: # powerup indicator in bottom bar when powerup active
+    #     pygame.draw.circle(screen, 'blue', (140, 930), 15)
 
     for i in range(lives): # display pacman icons based on how many lives remaining
         screen.blit(pygame.transform.scale(player_images[0], (30, 30)), (650 + i * 40, 915))
@@ -723,7 +757,7 @@ def drawPlayer():
 
 
 #function for drawing the tilemap board
-level = boards
+level = copy.deepcopy(boards) # copy, but keep original board intact for restarting game
 
 def drawBoard():
     num1 = ((HEIGHT - 50) // 32) #to leave space for the score & number of lives remaining.
@@ -915,11 +949,11 @@ while run:
         powerup = False
         eaten_ghost = [False,False,False,False]
     
-    if  startup_counter < 180:
+    if startup_counter < 180 and not game_over and not game_won:
         moving = False
-        startup_counter +=1
+        startup_counter += 1
     else:
-         moving = True
+        moving = True
 
     center_x = player_x + 23
     center_y = player_y + 24
@@ -937,6 +971,11 @@ while run:
     if clyde_dead:
         ghost_speeds[3] = 4
 
+    game_won = True
+    for i in range(len(level)):
+        if 1 in level[i] or 2 in level[i]: # check if any coin/powerup still active on the map
+            game_won = False
+
     player_circle = pygame.draw.circle(screen, 'black', (center_x, center_y), 20, 2) # invisible circle behind player used for collisions
 
     screen.fill('black')
@@ -951,7 +990,7 @@ while run:
     clyde = Ghost(clyde_x, clyde_y, targets[3], ghost_speeds[3], clyde_img, clyde_direction, clyde_dead, clyde_box, 3) # init clyde
     
     valid_turns = checkPosition(center_x,center_y) # calls checkPosition, checks for valid turn and passes the center point for the player sprite
-    if moving: # only allow the player to move after the startup counter
+    if moving and not game_over and not game_won: # only allow the player to move after the startup counter
         player_x, player_y = movePlayer(player_x,player_y)
         if not blinky_dead and not blinky.in_box:
             blinky_x, blinky_y, blinky_direction = blinky.moveBlinky()
@@ -1147,6 +1186,10 @@ while run:
         score += (2 ** eaten_ghost.count(True)) * 100 # increase score based on how many ghosts have been eaten
         
 
+    if game_over or game_won:
+        if score > loadHighScore():
+            saveHighScore(score)
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
@@ -1160,6 +1203,37 @@ while run:
                 direction_command = 2
             if event.key == pygame.K_DOWN:
                 direction_command = 3
+            if event.key == pygame.K_SPACE and (game_over or game_won):
+                lives = lives_init
+                powerup = False
+                power_counter = 0
+                lives -= 1
+                startup_counter = 0
+                player_x = 450
+                player_y = 663
+                direction = 0
+                direction_command = 0
+                blinky_x = 56
+                blinky_y = 58
+                blinky_direction = 0
+                inky_x = 440
+                inky_y = 388
+                inky_direction = 2
+                pinky_x = 440
+                pinky_y = 438
+                pinky_direction = 2
+                clyde_x = 440
+                clyde_y = 438
+                clyde_direction = 2
+                eaten_ghost = [False, False, False, False]
+                blinky_dead = False
+                inky_dead = False
+                clyde_dead = False
+                pinky_dead = False
+                game_over = False
+                game_won = False
+                level = copy.deepcopy(boards) # copy, but keep original board intact for restarting game
+                score = 0
         if event.type == pygame.KEYUP:    #Register direction changes with arrow keys
             if event.key == pygame.K_RIGHT and direction_command == 0:
                 direction_command = direction
